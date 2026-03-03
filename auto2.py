@@ -14,14 +14,11 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-# --- CONFIGURATION ---
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROFILE_PATH = os.path.join(SCRIPT_DIR, "jumptask_main_profile") 
 
-# --- MEMORY STORAGE ---
 completed_task_fingerprints = [] 
 
-# --- SECTION 1: BROWSER SETUP ---
 def get_stable_driver():
     options = Options()
     options.add_argument("--disable-blink-features=AutomationControlled") 
@@ -37,7 +34,6 @@ def get_stable_driver():
     options.add_argument(f"user-data-dir={PROFILE_PATH}")
     return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-# --- SECTION 2: HUMAN CLICKING ---
 def human_click_offset(driver, element, x, y):
     action = ActionChains(driver)
     action.move_to_element(element).move_by_offset(x, y)
@@ -56,7 +52,6 @@ def human_click_element(driver, element):
     action.release()
     action.perform()
 
-# --- SECTION 3: POPUP & INSTRUCTION READER ---
 def solve_checkbox_and_start(driver):
     print("[Bot] 🟢 Popup Detected! Waiting for text to render...")
     time.sleep(5.0) 
@@ -123,14 +118,13 @@ def solve_checkbox_and_start(driver):
         print(f"[Bot] Interaction Error: {e}")
         return False, None
 
-# --- SECTION 4: YOUTUBE HANDLING (THE PATIENCE FIX) ---
 def handle_youtube_tab(driver, main_window, search_query):
     try:
         new_tab = driver.window_handles[-1]
         if new_tab == main_window: return False 
         driver.switch_to.window(new_tab)
         
-        # --- WAIT UP TO 20 SECONDS FOR URL ---
+    
         print("[Bot] ⏳ Waiting for YouTube to load (Max 20s)...")
         valid_url = False
         for _ in range(20): 
@@ -273,7 +267,6 @@ def handle_youtube_tab(driver, main_window, search_query):
             driver.switch_to.window(main_window)
         return False
 
-# --- SECTION 5: NAVIGATOR ---
 def navigate_to_youtube_section(driver):
     print("[Nav] Locating YouTube Category...")
     try:
@@ -290,7 +283,6 @@ def navigate_to_youtube_section(driver):
     except: pass
     return False
 
-# --- SECTION 6: INTELLIGENT TASK PICKER ---
 def find_and_click_task(driver):
     print(f"[Bot] Scanning for FRESH tasks... (Ignored: {len(completed_task_fingerprints)})")
     
@@ -347,7 +339,6 @@ def find_and_click_task(driver):
     print("[Picker] ⚠️ No reachable tasks found.")
     return False
 
-# --- SECTION 7: MAIN LOOP ---
 def main_loop():
     print("=======================================")
     print("   JUMPTASK ULTIMATE BOT v83.0         ")
@@ -406,4 +397,5 @@ def main_loop():
             time.sleep(5)
 
 if __name__ == "__main__":
+
     main_loop()
